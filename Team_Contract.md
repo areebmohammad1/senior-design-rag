@@ -2,7 +2,7 @@
 **Project Title:** Local Context-Aware Knowledge Copilot with Epistemic Tracing  
 **Team Identifier:** EpistemicRAG (Version 1.0)  
 **Academic Year:** 2026–2027  
-**Faculty Advisor:** Dr. Andre Curtis-Trudel (Department of Philosophy / Center for Human-AI Teaming)  
+**Faculty Advisor:** Dr. Andre Curtis-Trudel (Department of Philosophy / Center for Humanities and Technology)  
 
 ---
 
