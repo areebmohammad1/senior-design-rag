@@ -15,7 +15,7 @@
 ### Faculty Advisor Record
 * **Name:** Dr. Andre Curtis-Trudel
 * **Department / Affiliation:** Department of Philosophy / Center for Humanities and Technology (CHaT)
-* **Email:** curtisae@ucmail.uc.edu
+* **Email:** curtisa4@ucmail.uc.edu
 
 ---
 
