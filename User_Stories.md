@@ -1,80 +1,28 @@
-# CS 5001: Senior Design Deliverable 4
-## User Stories, Use Case, and Acceptance Criteria
+## 3. Given / When / Then Acceptance Criteria
 
-**Project Title:** Local Context-Aware Knowledge Copilot with Epistemic Tracing  
-**Team Identifier:** EpistemicRAG  
-**Repository:** https://github.com/areebmohammad1/senior-design-rag  
-**Team Members:** Mohammad Areeb (Computer Science), Patrick Caudill (Geosciences)  
-**Faculty Advisor:** Dr. Andre Curtis-Trudel (Department of Philosophy / Center for Humanities and Technology)  
-
----
-
-## 1. Stakeholder Map & User Stories
-
-### Stakeholder Map
-* **Primary:** Academic Researcher / Student (queries local corpus and verifies cited answers).
-* **Secondary:** Faculty Advisor (evaluates synthesized literature and checks attribution integrity).
-* **Hidden:** Institutional Compliance Officer (demands zero data exfiltration across network boundaries).
-* **Hidden:** Low-Resource Workstation User (requires local execution within 16 GB system RAM).
-
-### User Stories
-* **US-01 (Primary):** As an **academic researcher**, I want **sentence-level attribution links back to exact source text chunks for every generated claim**, so that **I can independently verify evidence and eliminate literature synthesis hallucinations**.
-* **US-02 (Hidden / Compliance):** As an **institutional compliance officer**, I want **document parsing, vector indexing, and model inference to run strictly on localhost without outbound network calls**, so that **confidential research manuscripts comply with institutional data governance policies**.
-* **US-03 (Primary):** As an **academic researcher**, I want **an explicit refusal of extrapolation when corpus retrieval similarity falls below a defined certainty threshold**, so that **I am not misled by plausible-sounding speculative generation**.
-* **US-04 (Hidden / Resource):** As a **low-resource workstation user**, I want **the application to cap resident memory consumption under 12 GB RAM on CPU-only hardware**, so that **the system runs concurrently with desktop tools without operating system thrashing**.
-
-> **INVEST Self-Check:** All stories are independent, negotiable, valuable to distinct stakeholders, estimable within our semester timeline, sized small to single functional boundaries, and testable via quantifiable retrieval, network socket, and memory metrics without prescribing UI widgets.
-
----
-
-## 2. Use Case
-
-### UC-01: Query Corpus with Epistemic Tracing (Expands US-01 & US-03)
-* **Primary Actor:** Academic Researcher
-* **Secondary Actors:** ChromaDB (Vector Store), Ollama (Local LLM Daemon)
-* **Preconditions:**
-  1. Corpus documents (.pdf, .txt, .md) are indexed in local ChromaDB.
-  2. The local Ollama service is active on `localhost:11434`.
-
-#### Main Success Flow
-1. **Actor:** Submits a natural-language query targeting the local corpus.
-2. **System:** Embeds the query and retrieves top-$k$ candidate chunks ($k=4$) from ChromaDB.
-3. **System:** Confirms the top candidate chunk cosine similarity score is $\ge 0.65$.
-4. **System:** Injects chunks into a grounded prompt and streams a response where each assertive sentence includes an inline anchor (e.g., `[Ref: Chunk_ID]`).
-5. **Actor:** Clicks an inline anchor to verify source attribution.
-6. **System:** Displays the verbatim text snippet, file name, page number, and similarity score.
-
-#### Alternate Flow: Low-Confidence Refusal (US-03)
-* **3a.** If top candidate chunk cosine similarity is $< 0.65$:
-  * **3a.1. System:** Suppresses generative context injection.
-  * **3a.2. System:** Emits: *"The indexed corpus does not contain sufficient evidence to answer this query with verifiable certainty."*
-  * **3a.3. System:** Displays the closest candidate chunk's score with a low-confidence tag and halts.
-
-#### Exception Flow: Local LLM Engine Timeout
-* **4a.** If Ollama fails to respond within 30 seconds:
-  * **4a.1. System:** Catches connection timeout and logs the failure to `logs/copilot_error.log`.
-  * **4a.2. System:** Displays an offline notification prompting the user to check local daemon status.
-  * **4a.3. System:** Retains the input query in the input buffer.
-
-#### Postconditions:
-* The user receives a verifiable cited response or a deterministic refusal.
-* Zero queries or document contents leave `127.0.0.1`.
-
----
-
-## 3. Acceptance Criteria
+### Criteria for UC-01 (Query & Epistemic Tracing)
 
 * **AC-01.1 (Main Flow - Provenance Attribution):**  
-  **Given** an indexed document corpus in ChromaDB and a query with top chunk cosine similarity $\ge 0.65$,  
+  **Given** an indexed corpus in ChromaDB and a query whose top chunk similarity meets or exceeds the empirically calibrated threshold $\tau \in [0.40, 0.85]$ (baseline $\tau = 0.65$),  
   **When** the user submits the query and generation finishes,  
-  **Then** 100% of factual sentences contain a valid citation anchor referencing an indexed `Chunk_ID`, and clicking the anchor reveals the source excerpt with metadata in $\le 500\text{ ms}$.
+  **Then** 100% of factual assertions contain a valid citation anchor referencing an indexed `Chunk_ID`, and selecting the anchor reveals the source excerpt with metadata in $\le 500\text{ ms}$.  
+  *(Metric Grounding: 500 ms aligns with standard interactive UI perception thresholds for indexed local database lookups).*
 
-* **AC-01.2 (Alternate Flow - Epistemic Fallback):**  
-  **Given** a loaded corpus where all retrieved chunks score $< 0.65$ cosine similarity relative to the query,  
+* **AC-01.2 (Alternate Flow - Empirical Fallback Refusal):**  
+  **Given** a query where all retrieved chunks score below the operational threshold $\tau$,  
   **When** the retrieval evaluation pipeline scores the candidate chunks,  
-  **Then** the system returns an explicit refusal message within $2.0\text{ seconds}$, generates exactly $0$ ungrounded sentences, and reports the top candidate's similarity score.
+  **Then** the system returns an explicit refusal message in $\le 2.0\text{ seconds}$, generates exactly 0 ungrounded sentences, and reports the top candidate's similarity score alongside $\tau$.  
+  *(Metric Grounding: Retrieval scoring is purely vector math on local embeddings and requires no generative LLM compute; $\tau$ is empirically tuned via a 40-query test set to maximize precision against out-of-domain distractors).*
 
 * **AC-01.3 (Exception Flow - Local Daemon Failure):**  
-  **Given** the local Ollama process is terminated or non-responsive,  
+  **Given** the local Ollama process is terminated, unresponsive, or suspended by the OS,  
   **When** an inference request is dispatched to `http://localhost:11434`,  
-  **Then** the application aborts after $30.0\text{ seconds}$, displays error status `ERR_LOCAL_ENGINE_UNAVAILABLE`, retains the unsent query in the text input buffer, and records the failure in `logs/copilot_error.log`.
+  **Then** the application triggers an execution timeout after $30.0\text{ seconds}$, displays error status `ERR_LOCAL_ENGINE_UNAVAILABLE`, retains the unsent query in the text input buffer, and records the failure in `logs/copilot_error.log`.  
+  *(Metric Grounding: On standard 16 GB CPU hardware, time-to-first-token for quantized 3B models takes 3–8 seconds; any silence beyond 30 seconds indicates thread starvation, process termination, or deadlock).*
+
+---
+
+### Empirical Calibration & Baseline Protocol
+To eliminate arbitrary metric selection, system parameters will be empirically calibrated during milestone evaluation:
+1. **Confidence Threshold ($\tau$ Sweep):** We evaluate cosine similarity thresholds across the range $[0.40, 0.85]$ in increments of $0.05$ against a validation set of 20 grounded research questions and 20 out-of-domain distractor questions, selecting the $\tau$ that maximizes classification F1-score (balancing hallucination prevention with recall).
+2. **Resource & Latency Bounds:** Timeout and memory caps (12 GB RAM) are validated against CPU profiling logs to ensure headless operation without triggering operating system swap thrashing. text input buffer, and records the failure in `logs/copilot_error.log`.
