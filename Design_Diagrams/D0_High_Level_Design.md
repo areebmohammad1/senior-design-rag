@@ -77,3 +77,52 @@ An air-gapped, zero-cost knowledge synthesis copilot running locally within 16 G
     }
   ]
 }
+
+---
+
+## 5. Data-Flow Diagram
+
+![Data Flow Diagram D0](data_flow_diagram_d0.png)
+
+### Data-Flow Descriptions & Timing Budgets
+1. **Corpus Ingestion Flow:** Raw `.pdf`/`.md` files -> Text Chunks & Metadata -> Embeddings (d=384) -> ChromaDB Storage. *(Offline / Pre-query)*.
+2. **Query & Retrieval Flow:** Raw Query -> Query Embedding -> Top-k Similar Chunks (k=4) -> Score Threshold Check (tau = 0.65 baseline). *(Timing budget: <= 500 ms)*.
+3. **Synthesis & Citation Flow:** Valid Chunks + Prompt -> Local Ollama LLM Stream -> Anchored Response + Provenance Metadata. *(Timing budget: Time-to-first-token <= 3.0 s, complete generation <= 15.0 s)*.
+
+---
+
+## 6. Architecture Pattern & Justification
+
+### Selected Pattern: Combination Pipeline & Client-Server Architecture
+* **Client-Server Pattern:** Governs the relationship between C1 (Web/CLI UI) and C2 (Orchestrator) over Interface I1, as well as C4 and C6 (Ollama Daemon) over Interface I6.
+* **Pipeline (Pipe-and-Filter) Pattern:** Governs the sequential retrieval and prompt assembly pipeline (Retrieval -> Scoring/Threshold Filtering -> Context Injection -> Citation Mapping).
+
+### Justification Against Class Criteria
+1. **Fit to the Problem:** RAG and epistemic tracing inherently follow a staged data transformation pipeline.
+2. **Team Skills:** Both team members are proficient in Python, REST APIs, and modular component separation.
+3. **Performance & Timing:** Local client-server streaming over loopback (127.0.0.1) minimizes communication overhead while enforcing a strict 30-second timeout.
+4. **Scalability:** ChromaDB and Ollama run in separate processes, allowing independent scaling or swapping of local model runtimes without modifying UI or Orchestration code.
+5. **Hardware Constraints:** Fitting within 16 GB system RAM requires in-process Python component management rather than heavy multi-container microservice overhead.
+
+### Rejected Architectural Pattern
+* **Microservices Architecture:** Rejected due to excessive memory footprint, container orchestration overhead (Docker/Kubernetes), and IPC latency on a single 16 GB CPU workstation.
+
+---
+
+## 7. Decision Log
+
+1. **Decision 1: Local Ollama Daemon over Embedded Python LLM Bindings**
+   * *Alternatives Considered:* llama-cpp-python direct binding vs. external process Ollama service.
+   * *Rationale:* Ollama runs as an isolated background daemon with VRAM/RAM management, preventing Python process crashes if LLM memory spikes.
+
+2. **Decision 2: Local Persistence Vector Database (ChromaDB) over Remote Cloud Stores**
+   * *Alternatives Considered:* Pinecone / Qdrant Cloud vs. Local ChromaDB.
+   * *Rationale:* Enforces strict zero-network data egress compliance for confidential manuscripts and grant proposals.
+
+3. **Decision 3: Hard Fallback Refusal Threshold (tau = 0.65) over Unrestricted Synthesis**
+   * *Alternatives Considered:* Always passing top-k chunks to LLM vs. checking cosine similarity threshold score.
+   * *Rationale:* Prevents ungrounded extrapolation and hallucinations when relevant context is absent from the indexed corpus.
+
+4. **Decision 4: In-Process Function Calls for Pipeline Components (C2, C3, C4, C5)**
+   * *Alternatives Considered:* gRPC or internal REST endpoints between all internal sub-modules.
+   * *Rationale:* Keeps resident memory footprint below 12 GB RAM and eliminates inter-process serialization latency.
