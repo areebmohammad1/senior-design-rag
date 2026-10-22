@@ -77,7 +77,7 @@ An air-gapped, zero-cost knowledge synthesis copilot running locally within 16 G
     }
   ]
 }
-'''
+```
 ---
 
 ## 5. Data-Flow Diagram
