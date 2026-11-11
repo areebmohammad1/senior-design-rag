@@ -94,7 +94,8 @@ Both team members report using Gemini and ChatGPT to assist with drafts and form
 **Not a substitute for:** Requirements, stakeholder priorities, architecture, data-model decisions, ethical trade-offs, and assessed written analysis remain the responsibility of the team. Each member must inspect and revise AI-assisted drafts so the final submission reflects the team's own conclusions. AI outputs are not evidence of implementation or testing.
 
 **Individual acknowledgments**
-Mohammad Areeb — Signature: Mohammad Areeb Date: 11/11/2026  
-Patrick Caudill — Signature: Patrick Caudill Date: 11/11/2026
+
+Mohammad Areeb — Signature: Mohammad Areeb                   Date: 11/11/2026  
+Patrick Caudill — Signature: Patrick Caudill                 Date: 11/11/2026
 
 By signing, each member confirms that the disclosure accurately describes their AI use and that the submitted architecture, data model, priorities, and design rationale reflect the team's own work.
