@@ -88,12 +88,12 @@ Both team members report using Gemini and ChatGPT to assist with drafts and form
 
 | Tool | Used by | Task | Column | How verified |
 |---|---|---|---|---|
-| Google Gemini | Mohammad Areeb and Patrick Caudill | Drafting and organizing previous senior-design documentation | Generally OK | Team to confirm final review against assignment requirements and agreed design artifacts |
-| ChatGPT | Mohammad Areeb and Patrick Caudill | Drafting and formatting project documentation, including this ethics statement | Generally OK | Team to confirm final review against repository documentation and independently agreed decisions |
+| Google Gemini | Mohammad Areeb and Patrick Caudill | Drafting and organizing previous senior-design documentation | Generally OK | Both members reviewed drafts against assignment instructions and agreed project requirements and design artifacts |
+| ChatGPT | Mohammad Areeb and Patrick Caudill | Drafting and formatting project documentation, including this ethics statement | Generally OK | Both members checked the final content against repository documentation, team decisions, and assignment requirements |
 
 **Not a substitute for:** Requirements, stakeholder priorities, architecture, data-model decisions, ethical trade-offs, and assessed written analysis remain the responsibility of the team. Each member must inspect and revise AI-assisted drafts so the final submission reflects the team's own conclusions. AI outputs are not evidence of implementation or testing.
 
-**Individual acknowledgment — to be completed personally after review**  
+**Individual acknowledgments**
 Mohammad Areeb — Signature: Mohammad Areeb Date: 11/11/2026  
 Patrick Caudill — Signature: Patrick Caudill Date: 11/11/2026
 
