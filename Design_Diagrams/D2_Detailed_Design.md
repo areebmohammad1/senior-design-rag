@@ -101,8 +101,7 @@ dashed red arrows represent error paths.
 
 ## 4. Requirements Traceability
 
-The IDs below are **D2 working identifiers**; reconcile with the exact IDs in `User_Stories.md` before final submission. No requirement is considered verified until implemented and tested.
-
+The traceability table maps the project's functional and non-functional requirements to specific design elements and references the original user stories (US-01–US-04) and acceptance criteria (AC-01.1–AC-01.3). The FR/NFR identifiers are internal design identifiers. Requirements remain unverified until implementation and testing are completed.
 
 | ID / requirement | Priority | Specific design element and how | Error IDs / figure |
 |---|---|---|---|
