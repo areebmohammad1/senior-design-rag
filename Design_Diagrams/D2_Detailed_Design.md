@@ -103,22 +103,27 @@ dashed red arrows represent error paths.
 
 The IDs below are **D2 working identifiers**; reconcile with the exact IDs in `User_Stories.md` before final submission. No requirement is considered verified until implemented and tested.
 
+
 | ID / requirement | Priority | Specific design element and how | Error IDs / figure |
 |---|---|---|---|
-| FR-01 Local document ingestion | Must | `POST /api/documents` → C3 parser/chunker → Document/Chunk/Embedding entities | E03, E09–E12; D2-1 |
-| FR-02 Ask document-grounded questions | Must | `POST /api/query` → C2 query handler → C4 evidence gate | E01, E05, E13; D2-1 |
-| FR-03 Semantic retrieval | Must | C5 vector search, 384-d embeddings, `k=4` baseline | E17–E20; D1 data model |
-| FR-04 Traceable source citations | Must | Citation→Chunk→Document foreign-key chain; `C4.citation_validator` | E14–E15; D1 data model |
-| FR-05 Insufficient-evidence handling | Must | Similarity threshold baseline `0.65`; `C4.evidence_gate` abstains below threshold | E13; D2-1 |
-| FR-06 Local response generation | Must | `C6.generate_response` via local Ollama with retrieved context | E21–E24; D2-1 |
-| FR-07 Local browser interaction | Must | C1 upload/query/status views and C2 HTTP endpoints | E01–E04; D2-1 |
-| FR-08 Structured error reporting | Must | C2 error envelopes; C1 notification handler | E04, E08, E39; D2-1 |
-| NFR-01 Air-gapped / zero runtime egress | Must | Loopback binding `Config.bind_guard`, no cloud fallback, local C5/C6 | E08, E24, E32; D2-1 |
-| NFR-02 Zero paid runtime services | Must | Local ChromaDB, sentence-transformers, Ollama; build-vs-reuse inventory in D1 | E12, E24; D1 reuse table |
-| NFR-03 CPU and ≤16 GB RAM target | Must | Quantized local model, `C6.context_budgeter`, bounded retrieval; **benchmark pending** | E21, E24; D2-1 |
-| NFR-04 Local data privacy | Must | Local storage, session guard, log redaction; no prompt/document logging | E07, E25–E28, E35; D2-1 |
-| NFR-05 Citation integrity | Must | `C4.citation_validator` verifies IDs before display | E14–E15; D1 entity diagram |
-| NFR-06 Evaluation and performance visibility | Should | Planned test protocol: retrieval relevance, citation validity, unsupported-claim rate, latency, peak RAM; **thresholds not yet approved** | E13–E15, E22, E24; review PR-01/02 |
+| FR-01 Local document ingestion | Must | `POST /api/documents` → C3 parser/chunker → Document/Chunk/Embedding entities; accepts local PDF, TXT, and Markdown files | E03, E09–E12; D2-1 |
+| FR-02 Ask document-grounded questions | Must | `POST /api/query` → C2 query handler → C4 evidence gate; supports academic research and grant-report synthesis from indexed records (US-01, US-03) | E01, E05, E13; D2-1 |
+| FR-03 Semantic retrieval | Must | C5 cosine-similarity vector search using 384-d embeddings and `k=4` baseline; retrieves source chunks for evidence evaluation | E17–E20; D1 data model |
+| FR-04 Traceable source citations | Must | `C4.citation_validator` checks sentence-level `[Ref: Chunk_ID]` anchors against the Citation→Chunk→Document relationship; C1 provides clickable source verification | E14–E15; D1 data model, D2-1 |
+| FR-05 Insufficient-evidence handling | Must | `C4.evidence_gate` compares the highest similarity score with calibrated threshold `τ` (baseline 0.65); below threshold, returns a refusal with score and `τ`, without invoking C6 | E13, E17; D2-1 |
+| FR-06 Local response generation | Must | `C6.generate_response` invokes local Ollama with retrieved evidence; `C6.timeout_handler` enforces a 30-second timeout and surfaces inference failures | E21–E24; D2-1 |
+| FR-07 Local browser interaction | Must | C1 upload/query/status views communicate through C2 HTTP endpoints; citation viewer displays source excerpt, filename, page/section, and similarity score | E01–E04, E14–E15; D2-1 |
+| FR-08 Structured error reporting | Must | C2 returns structured error codes; C1 displays actionable notifications and retains query text after local engine failure | E04, E08, E22, E39; D2-1 |
+| NFR-01 / US-02 Air-gapped / zero runtime egress | Must | `Config.bind_guard` enforces `127.0.0.1` binding; C3/C5/C6 operate locally with no cloud fallback or outbound runtime requests | E08, E24, E32; D2-1 |
+| NFR-02 Zero paid runtime services | Must | Local ChromaDB, sentence-transformers, and Ollama; dependency choices documented in the D1 build-versus-reuse inventory | E12, E24; D1 reuse table |
+| NFR-03 / US-04 CPU-only, ≤12 GB resident RAM | Must | Quantized local Ollama model, bounded context through `C6.context_budgeter`, and runtime memory profiling to verify the 12 GB application limit on 16 GB CPU hardware | E21, E24; D2-1 |
+| NFR-04 Local data privacy | Must | Local document storage, session authentication, loopback access, and redacted diagnostic logging; full documents, prompts, and credentials excluded from routine logs | E07, E25–E28, E35; D2-1 |
+| NFR-05 Citation integrity | Must | `C4.citation_validator` verifies citation IDs against indexed chunks and rejects unsupported or invalid attribution before display | E14–E15; D1 entity diagram |
+| NFR-06 Evaluation and performance visibility | Should | Planned 40-query calibration set (20 grounded, 20 out-of-domain), `τ` sweep from 0.40 to 0.85 in 0.05 increments, and F1-based threshold selection; additional planned metrics include retrieval relevance, citation validity, unsupported-claim rate, latency, and peak RAM; additional acceptance thresholds remain pending | E13–E15, E22, E24; PR-01/02 |
+| AC-01.1 / US-01 Citation coverage and verification | Must | `C4.citation_validator` targets valid anchors for 100% of factual assertions; C1 citation viewer targets source excerpt and metadata display within ≤500 ms | E14, E15; D1 data model, D2-1 |
+| AC-01.2 / US-03 Calibrated fallback | Must | `C4.evidence_gate` compares maximum cosine similarity against `τ`; targets refusal within ≤2 seconds with zero generated unsupported sentences, reporting the score and threshold without invoking C6; calibrates using 20 grounded and 20 distractor questions | E13, E17; D2-1 |
+| AC-01.3 Local daemon failure | Must | `C6.timeout_handler` enforces a 30-second timeout; C2 returns `ERR_LOCAL_ENGINE_UNAVAILABLE`; C1 retains the query; logging records the failure in `logs/copilot_error.log` | E22, E24, E36; D2-1 |
+
 
 **Gaps:** FR/NFR identifiers must be cross-checked against the committed User Stories; quantitative acceptance thresholds and measured performance are pending team agreement and implementation. These gaps are not silently treated as satisfied.
 
