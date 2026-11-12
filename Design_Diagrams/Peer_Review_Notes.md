@@ -14,8 +14,8 @@
 
 | ID | Criterion | Issue / reviewing team | Proposed action | Owner | Priority | Due date |
 |---|---|---|---|---|---|---|
-| PR-01 | Clarity | Testing methods unclear; **PolyPredict** | Specify evaluation metrics for retrieval relevance, citation correctness, and unsupported-claim frequency | **To assign** | Proposed must-fix | **To set** |
-| PR-02 | Feasibility | Performance acceptance criteria unclear; **PolyPredict** | Specify measurement procedure and target thresholds for latency, peak RAM, and response quality | **To assign** | Proposed must-fix | **To set** |
+| PR-01 | Clarity | Testing methods unclear; **PolyPredict** | Specify evaluation metrics for retrieval relevance, citation correctness, and unsupported-claim frequency | Mohammad Areeb | Proposed must-fix | December 4, 2026 |
+| PR-02 | Feasibility | Performance acceptance criteria unclear; **PolyPredict** | Specify measurement procedure and target thresholds for latency, peak RAM, and response quality | Patrick Caudill | Proposed must-fix | December 4, 2026 |
 
 ## Review Summary
 
