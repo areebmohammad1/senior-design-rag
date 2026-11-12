@@ -26,7 +26,7 @@ D1 remains authoritative for C3, C4, C5 and the persistent entities **Document, 
 | **C6 — Local Ollama inference** | No project-specific persistent data; local model artifacts managed by Ollama | Check local model availability; generate from question + retrieved evidence; return text or explicit failure | `generate_response(question, context_chunks, model_name)`; `MODEL_UNAVAILABLE`, `INFERENCE_TIMEOUT`, `RESOURCE_EXHAUSTED` |
 | **Session authentication** | Ephemeral local session token; no user-account database | Initialize session and validate protected requests; bind service to loopback | `initialize_session()`, `validate_session(token)`; `INVALID_SESSION`, `UNAUTHORIZED` |
 | **Configuration** | Local configuration file/values (model, `k`, threshold, storage path, bind address) | Load at startup; validate allowed ranges; refuse unsafe network bind | `load_config()`, `validate_config()`; `INVALID_CONFIG`, `UNSAFE_BIND` |
-| **Logging** | Local diagnostic events only; no full documents, prompts, or secrets | Record operation ID, timestamp, status and error code; report logging failure without disclosing private data | `log_event(operation, status, error_code)`; `LOG_WRITE_FAILED` |
+| **Logging** | Local diagnostic events stored in `logs/copilot_error.log`; no full documents, prompts, or secrets | Record operation ID, timestamp, status, and error code; log local Ollama failures while excluding sensitive content | `log_event(operation, status, error_code)`; `LOG_WRITE_FAILED` |
 | **Notifications** | No persistent data | In-app progress, success, warning, and error messages through C1; no email/push service | `display_status(request_id, status, message)`; `UI_UNAVAILABLE` |
 
 **Example browser-facing query contract (proposed):**
@@ -77,7 +77,7 @@ dashed red arrows represent error paths.
 | E19 | C5 | BI | Wrong embedding dimension (expected 384) | Reject incompatible vector; `C5.dimension_validator` | Yes |
 | E20 | C5 | ED | Disk full / ChromaDB inaccessible | Fail safely; preserve existing records where possible; `C5.storage_handler` | Sometimes |
 | E21 | C6 | BV | Prompt/context exceeds local model window | Truncate context by ranked chunks or reject; `C6.context_budgeter` | Yes |
-| E22 | C6 | TC | Model inference exceeds timeout | Cancel/timeout and surface error; `C6.timeout_handler` | Yes, retry |
+| E22 | C6 | TC | Ollama inference exceeds 30-second timeout | `C6.timeout_handler` stops the request; C2 returns `ERR_LOCAL_ENGINE_UNAVAILABLE`; C1 retains the query and displays an error; Logging records the failure in `logs/copilot_error.log` | Yes, retry after checking Ollama |
 | E23 | C6 | BI | Empty question or context payload | Reject `INVALID_CONTEXT`; `C6.input_validator` | Yes |
 | E24 | C6 | ED | Ollama stopped, model missing, or memory exhausted | Surface explicit failure, no cloud fallback; `C6.model_handler` | Sometimes |
 | E25 | Auth | BV | Expired/invalid token | Deny and reinitialize session; `Auth.session_validator` | Yes |
