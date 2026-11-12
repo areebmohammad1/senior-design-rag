@@ -43,7 +43,12 @@ D1 remains authoritative for C3, C4, C5 and the persistent entities **Document, 
 
 **D0 interface review:** C1 communicates only with C2, never directly with ChromaDB or Ollama. Use one structured query object rather than many positional parameters. C2 passes retrieved chunk IDs and source text to C6; citation verification remains under C4, not the language model. No network-facing service or cloud fallback is allowed. Configuration changes are initially backend-managed rather than exposed as unrestricted browser controls.
 
-**Figure D2-1:** `EpistemicRAG_D2_Architecture.drawio` — D2 component interactions and explicit failure paths. Include an exported PNG/SVG of this figure in the PDF. Its title and goal caption must accompany the figure.
+**Figure D2-1 — Architecture and Error Handling**
+
+![EpistemicRAG D2 Architecture](architecture_d2.png)
+
+Solid arrows represent normal data flow;
+dashed red arrows represent error paths.
 
 ## 3. Edge Cases and Error Handling
 
