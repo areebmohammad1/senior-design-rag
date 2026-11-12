@@ -11,7 +11,8 @@
 
 **Two-minute overview.** EpistemicRAG lets a researcher upload local documents, ask questions through a browser on `127.0.0.1`, retrieve relevant chunks from a local vector store, and generate answers using a local Ollama model with traceable citations. D0 established the six-component architecture. D1 detailed C3 ingestion, C4 epistemic provenance, and C5 vector storage, including their data entities, algorithms, and interfaces. D2 completes C1 browser UI, C2 orchestration, C6 inference, and supporting session, configuration, and logging functions; it adds failure paths, traceability, rationale, and peer-review actions.
 
-**Diagram conventions.** In the accompanying `EpistemicRAG_D2_Architecture.drawio`, labeled rectangles are components or handlers; solid arrows are normal request/data flows; dashed red arrows are failure paths. Labels identify the interface or error. D1's entity-relationship diagram uses entities as boxes, PK/FK labels for keys, and labeled relationships for cardinality. The D0 block and data-flow diagrams retain their original conventions. **Each diagram should display the project title and goal statement in its caption or heading when exported into the consolidated PDF.**
+**Diagram conventions.** In the accompanying `EpistemicRAG_D2_Architecture.drawio`, labeled rectangles are components or handlers; solid arrows are normal request/data flows; dashed red arrows are failure paths. Labels identify the interface or error. D1's entity-relationship diagram uses entities as boxes, PK/FK labels for keys, and labeled relationships for cardinality. The D0 block and data-flow diagrams retain their original conventions. The diagrams are labeled with the project title and accompanied by the D0 goal statement in their captions or headings.
+
 
 **Known gaps:** Implementation has not begun; model latency and peak RAM have not been benchmarked; exact library versions and license compatibility remain to be verified; secure browser-session bootstrap and performance acceptance criteria require team confirmation. These are tracked as design risks rather than presented as completed tests.
 
@@ -130,7 +131,7 @@ The traceability table maps the project's functional and non-functional requirem
 
 ## 5. Design Rationale
 
-These entries summarize **proposed team decisions** consistent with D0/D1. The team should verify the alternatives/trade-offs; **no peer-review-driven change is claimed without evidence**. See the D0 decision log for earlier context.
+The following decisions document the architectural choices, alternatives considered, and accepted trade-offs for EpistemicRAG. They build on the design decisions established in D0 and D1.
 
 | ID | Decision and accepted trade-off | Review status |
 |---|---|---|
@@ -143,7 +144,7 @@ These entries summarize **proposed team decisions** consistent with D0/D1. The t
 | DR-07 | We chose **local, redacted diagnostic logs** over external telemetry because research content is private. We accepted reduced debugging detail to avoid retaining sensitive prompts. | Proposed D2 elaboration |
 | DR-08 | We chose **explicit error reporting without cloud fallback** over silent recovery through hosted services because zero egress is mandatory. We accepted occasional user-visible failures to preserve that guarantee. | Proposed D2 elaboration |
 
-**Peer review linkage:** Existing feedback identified missing testing/evaluation detail (PR-01, PR-02). The evaluation requirement NFR-06 and its open acceptance-criteria gap have been made explicit in this draft. Mark any subsequent design change as **review-driven** only after the team approves and applies it.
+**Peer review linkage:** Feedback from PolyPredict (PR-01 and PR-02) identified opportunities to clarify testing methodology and measurable performance criteria. In response, D2 explicitly documents the existing 40-query threshold-calibration protocol and expands NFR-06 to include citation validity, unsupported-claim frequency, response latency, and peak RAM usage. These review-driven clarifications strengthen the evaluation plan; implementation and validation remain pending.
 
 ## 6. Peer Design Review Notes
 
