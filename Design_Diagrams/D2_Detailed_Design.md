@@ -124,7 +124,7 @@ The traceability table maps the project's functional and non-functional requirem
 | AC-01.3 Local daemon failure | Must | `C6.timeout_handler` enforces a 30-second timeout; C2 returns `ERR_LOCAL_ENGINE_UNAVAILABLE`; C1 retains the query; logging records the failure in `logs/copilot_error.log` | E22, E24, E36; D2-1 |
 
 
-**Gaps:** FR/NFR identifiers must be cross-checked against the committed User Stories; quantitative acceptance thresholds and measured performance are pending team agreement and implementation. These gaps are not silently treated as satisfied.
+**Gaps:** Quantitative performance targets beyond the stated acceptance criteria and measured system performance remain pending team agreement and implementation. These gaps are not treated as satisfied.
 
 **Reverse scope check:** C1 supports FR-01/02/07/08; C2 supports FR-01/02/06/08; C3 supports FR-01; C4 supports FR-02/04/05 and NFR-05/06; C5 supports FR-03 and NFR-04; C6 supports FR-06 and NFR-03; Auth supports NFR-04; Config supports NFR-01/03; Logging supports NFR-04 and FR-08; Notifications supports FR-08. No design component is included solely without a mapped requirement.
 
@@ -147,4 +147,5 @@ The following decisions document the architectural choices, alternatives conside
 
 ## 6. Peer Design Review Notes
 
-See the companion `Peer_Review_Notes.md` for the original feedback, proposed actions, and fields requiring confirmation. This file is placed last in the consolidated Assignment #4 PDF.
+See the companion `Peer_Review_Notes.md` for the feedback received from PolyPredict, the resulting design improvements, assigned follow-up actions, and the reviews provided to PolyPredict and Team Pulse. The peer review notes appear last in the consolidated Assignment #4 PDF.
+
