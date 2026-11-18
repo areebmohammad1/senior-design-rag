@@ -14,18 +14,22 @@
 
 Mohammad Areeb is the sole presenter for all ten main slides. There are no speaker handoffs.
 
-| Slide | Topic | Speaker |
-|---|---|---|
-| 1 | Title and purpose | Mohammad Areeb |
-| 2 | Team and faculty advisor | Mohammad Areeb |
-| 3 | Project abstract | Mohammad Areeb |
-| 4 | User stories | Mohammad Areeb |
-| 5 | Simplified D0 architecture | Mohammad Areeb |
-| 6 | Major project constraints | Mohammad Areeb |
-| 7 | Progress review | Mohammad Areeb |
-| 8 | Expected end-of-term outcomes | Mohammad Areeb |
-| 9 | Division of work | Mohammad Areeb |
-| 10 | Expo demonstration | Mohammad Areeb |
+| Slide | Topic | Speaker | Planned Start |
+|---|---|---|---|
+| 1 | Title and purpose | Mohammad Areeb | 0:00 |
+| 2 | Team and faculty advisor | Mohammad Areeb | 0:25 |
+| 3 | Project abstract | Mohammad Areeb | 0:45 |
+| 4 | User stories | Mohammad Areeb | 1:25 |
+| 5 | Simplified D0 architecture | Mohammad Areeb | 2:05 |
+| 6 | Major project constraints | Mohammad Areeb | 3:00 |
+| 7 | Progress review | Mohammad Areeb | 3:35 |
+| 8 | Expected end-of-term outcomes | Mohammad Areeb | 4:10 |
+| 9 | Division of work | Mohammad Areeb | 4:45 |
+| 10 | Expo demonstration | Mohammad Areeb | 5:15 |
+
+**Planned presentation duration:** Approximately 6 minutes.
+
+**Handoffs:** Not applicable. Mohammad Areeb presents the entire slideshow individually. Transitions between slides are handled by the same presenter.
 
 ## 3. Timekeeper and Rehearsal
 
